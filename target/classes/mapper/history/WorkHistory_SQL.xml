@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="history">
+	
+	
+	<select id="getWorkHistoryList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+					SELECT WORK_DATE  
+					     , WORK_NO    
+					     , WORK_TITLE 
+					FROM WORK_HISTORY
+				   WHERE 1=1
+		]]>
+
+					<if test='"" != mStartDate'>
+					<![CDATA[
+					AND WORK_DATE >= #{mStartDate}
+					]]> 
+					</if>	
+							
+					<if test='"" != mEndDate'>
+					<![CDATA[
+					AND WORK_DATE <= #{mEndDate}
+					]]> 
+					</if>	
+					
+					<if test='"" != mWorkTitle'>
+					<![CDATA[
+					AND ( WORK_TITLE LIKE CONCAT('%',#{mWorkTitle},'%')
+						OR WORK_MEMO LIKE CONCAT('%',#{mWorkTitle},'%')
+						OR WORK_KEYWORD LIKE CONCAT('%',#{mWorkTitle},'%'))
+					]]> 
+					</if>
+					
+					<if test='"" != mWorkerNm'>
+					<![CDATA[
+					AND WORKER_NO IN (SELECT USERNAME 
+										FROM USERS 
+									 	WHERE USER_NM LIKE CONCAT('%',#{mWorkerNm},'%')
+									 	  OR USERNAME LIKE CONCAT('%',#{mWorkerNm},'%'))
+					]]> 
+					</if>
+					
+					<if test='"" != mWorkStatus'> <![CDATA[ AND WORKER_STATUS <= #{mWorkStatus} ]]> </if>
+					
+					<if test='"" != mWorkGcode'> <![CDATA[ AND G_CODE = #{mWorkGcode} ]]>  </if>
+					<if test='"" != mWorkMcode'> <![CDATA[ AND M_CODE = #{mWorkMcode} ]]>  </if>
+					<if test='"" != mWorkDcode'> <![CDATA[ AND D_CODE = #{mWorkDcode} ]]>  </if>	
+					
+					<![CDATA[ ORDER BY WORK_DATE DESC, WORK_NO DESC ]]>
+					
+					
+	</select>
+	
+	<select id="getWorkHistoryListSub" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[
+					SELECT WORK_DATE    
+					     , WORK_NO      
+					     , (SELECT USER_NM FROM USERS B WHERE B.USERNAME = A.WORKER_NO) WORKER_NO
+					     , G_CODE       
+					     , M_CODE       
+					     , D_CODE       
+					     , WORK_LEVEL   
+					     , WORK_TITLE   
+					     , WORK_MEMO    
+					     , WORK_KEYWORD 
+					     , REG_ID       
+					     , REG_DT       
+					     , CHG_DT       
+					     , WORK_TITLE   
+					FROM WORK_HISTORY A   
+					WHERE 1=1
+					  AND WORK_NO = #{IDX}
+					  AND WORK_DATE = #{WORK_DATE}
+		]]>
+		 
+	</select>
+	
+	<insert id="insertWorkHistory" parameterType="hashmap" useGeneratedKeys="true" keyProperty="mWorkNo">
+	
+		<selectKey keyProperty="mWorkNo" resultType="int" order="BEFORE">
+		<![CDATA[
+			select MAX(WORK_NO) AS mWorkNo from WORK_HISTORY WHERE WORK_DATE = #{mWorkDate}
+		]]>
+		</selectKey>
+		
+		<![CDATA[
+			INSERT INTO WORK_HISTORY
+			(
+			  WORK_DATE
+			, WORK_NO
+			, WORKER_NO
+			, G_CODE
+			, M_CODE
+			, D_CODE
+			, WORK_STATUS
+			, WORK_LEVEL
+			, WORK_TITLE
+			, WORK_MEMO
+			, WORK_KEYWORD
+			, REG_ID
+			, REG_DT
+			, CHG_ID
+			, CHG_DT
+			)
+			VALUES
+			(
+			  #{mWorkDate} 
+			, null
+			, (SELECT USERNAME FROM USERS WHERE USER_NM = #{mWorkerNo}) 
+			, #{mGcode}
+			, #{mMcode}
+			, #{mDcode}
+			, #{mWorkStatus}
+			, #{mWorkLevel}
+			, #{mWorkTitle}
+			, #{mWorkMemo}
+			, #{mWorkKeyword}
+			, #{mWorkerNo}
+			,  now()
+			, #{mWorkerNo}
+			, now()
+			)
+		]]>
+	</insert>	
+	
+	
+	<update id="updateWorkHistory" parameterType="hashmap" useGeneratedKeys="true" keyProperty="mWorkNo">
+	
+		<selectKey keyProperty="mWorkNo" resultType="int" order="AFTER">
+		<![CDATA[
+			select MAX(WORK_NO) AS mWorkNo 
+			  from WORK_HISTORY 
+			 WHERE WORK_DATE = #{mWorkDate} 
+			   AND WORK_NO = #{mWorkNo} 
+		]]>
+		</selectKey>
+		
+		<![CDATA[
+			 UPDATE WORK_HISTORY  
+				SET    
+				      WORKER_NO 	 = (SELECT USERNAME FROM USERS WHERE USER_NM = #{mWorkerNo}) 
+				    , G_CODE    	 = #{mGcode}
+				    , M_CODE    	 = #{mMcode}
+				    , D_CODE   		 = #{mDcode}
+				    , WORK_STATUS    = #{mWorkStatus}
+				    , WORK_LEVEL     = #{mWorkLevel}
+				    , WORK_TITLE     = #{mWorkTitle}
+				    , WORK_MEMO      = #{mWorkMemo}
+				    , WORK_KEYWORD   = #{mWorkKeyword}
+				    , CHG_ID         = #{mWorkerNo}
+				    , CHG_DT         = now()
+				WHERE WORK_DATE = #{mWorkDate}  
+				  AND WORK_NO   = #{mWorkNo} 
+		]]>
+	</update>
+	
+	<delete id="deleteWorkHistory" parameterType="hashmap">
+
+		<![CDATA[
+			 DELETE FROM WORK_HISTORY 
+				WHERE WORK_DATE = #{mWorkDate}  
+				  AND WORK_NO   = #{mWorkNo} 
+		]]>
+	</delete>
+	
+	<select id="getWorkerNm" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[
+					SELECT USER_NM 
+					  FROM USERS
+					 WHERE USERNAME = #{mWorkerNo}
+		]]>
+		
+		 
+	</select>
+	
+	<select id="getHistoryComCode" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+				   
+				   SELECT MEDCD, MEDCD_NM
+				     FROM MT_COM_CODE
+				    WHERE LARGCD = #{mWorkCode}
+		]]>
+		
+					<if test='"C0010" != mWorkCode'>
+					<![CDATA[
+					AND TEMP1 = #{mWorkValue}
+					]]> 
+					</if>
+					
+	</select>
+	
+</mapper>

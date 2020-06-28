@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="history">
+	
+	<select id="getWorkHistoryList" parameterType="hashmap" resultType="hashmap">
+	<!--  	<include refid="common.pagingPre"/> --> 
+		<![CDATA[
+					SELECT WORK_DATE  
+					     , WORK_NO    
+					     , WORK_TITLE 
+					FROM WORK_HISTORY 
+		]]>
+ 	<!-- 	<include refid="common.pagingPost"/> --> 
+	</select>
+	
+	<select id="getWorkHistoryListSub" parameterType="hashmap" resultType="hashmap">
+	<!--  	<include refid="common.pagingPre"/> --> 
+		<![CDATA[
+					SELECT WORK_DATE    
+					     , WORK_NO      
+					     , (SELECT USER_NM FROM USERS B WHERE B.USERNAME = A.WORKER_NO) WORKER_NO
+					     , G_CODE       
+					     , M_CODE       
+					     , D_CODE       
+					     , WORK_LEVEL   
+					     , WORK_TITLE   
+					     , WORK_MEMO    
+					     , WORK_KEYWORD 
+					     , REG_ID       
+					     , REG_DT       
+					     , CHG_DT       
+					     , WORK_TITLE   
+					FROM WORK_HISTORY A   
+					WHERE 1=1
+					  AND WORK_NO = #{IDX}
+					  AND WORK_DATE = #{WORK_DATE}
+		]]>
+ 	<!-- 	<include refid="common.pagingPost"/> --> 
+	</select>
+	
+</mapper>

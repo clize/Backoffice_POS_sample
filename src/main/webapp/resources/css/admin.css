@@ -1,0 +1,93 @@
+
+.panel-default > .panel-table-heading-custom{
+  background-image: none;
+  background-color: #808080;
+  color: #ffffff;
+}
+
+.content-loader tr td {
+    white-space: nowrap;
+}
+.content-loader label {
+    white-space: nowrap;
+}
+
+.alignRight { text-align: right; }
+.alignCenter { text-align: center; }
+
+.bodyfullcontainer { max-height: 480px; width: 100%; margin: 0; overflow-y: auto; }
+.table-scrollable { margin: 0; padding: 0; }
+
+body .modal-admin {
+    /* new custom width */
+    width: 750px;
+}
+
+.spinner {
+  display: inline-block;
+  opacity: 0;
+  width: 0;
+
+  -webkit-transition: opacity 0.25s, width 0.25s;
+  -moz-transition: opacity 0.25s, width 0.25s;
+  -o-transition: opacity 0.25s, width 0.25s;
+  transition: opacity 0.25s, width 0.25s;
+}
+
+.has-spinner.active {
+  cursor:progress;
+}
+
+.has-spinner.active .spinner {
+  opacity: 1;
+  width: auto; /* This doesn't work, just fix for unkown width elements */
+}
+
+.has-spinner.btn-mini.active .spinner {
+    width: 10px;
+}
+
+.has-spinner.btn-small.active .spinner {
+    width: 13px;
+}
+
+.has-spinner.btn.active .spinner {
+    width: 16px;
+}
+
+.has-spinner.btn-large.active .spinner {
+    width: 19px;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
+}
+input[readonly] {
+  background-color: white !important;
+  cursor: text !important;
+}
+
+.label-container {
+    height: 50px;
+    display:table-cell;
+    vertical-align:middle;
+    text-align:left;
+  
+}
+
+.jstree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }

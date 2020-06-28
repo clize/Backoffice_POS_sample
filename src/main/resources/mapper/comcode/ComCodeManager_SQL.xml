@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="comcode">
+	
+	<select id="selectComCodeList" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[
+			SELECT MEDCD
+			     , MEDCD_NM
+			     , NVL(USE_YN,'') AS USE_YN
+			     , CHG_ID
+			     , CHG_DT
+			     , REG_ID
+			     , REG_DT
+			FROM
+			    MT_COM_CODE
+		  WHERE LARGCD = '00000'
+		  
+					]]> 
+						
+				<if test='null != mMedcd'>
+				<![CDATA[
+				AND ( MEDCD LIKE CONCAT('%',#{mMedcd},'%')
+				OR MEDCD_NM LIKE CONCAT('%',#{mMedcd},'%'))
+				]]> 
+				</if>
+				
+				<![CDATA[ ORDER BY MEDCD ]]>
+	
+	</select>
+	
+	<select id="selectComCodeListSub" parameterType="hashmap" resultType="hashmap"> 
+		<![CDATA[
+			SELECT MEDCD
+			     , MEDCD_NM
+			     , NVL(USE_YN,'') AS USE_YN
+			     , CHG_ID
+			     , CHG_DT
+			     , REG_ID
+			     , REG_DT
+			FROM
+			    MT_COM_CODE
+		  WHERE LARGCD = #{mMedcd}
+		  
+					]]> 
+					
+				
+				<![CDATA[ ORDER BY MEDCD ]]>
+	
+	</select>
+	
+</mapper>
